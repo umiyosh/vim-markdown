@@ -10,6 +10,18 @@ endif
 runtime! syntax/html.vim
 unlet! b:current_syntax
 
+if !exists('g:markdown_github_languages')
+  let g:markdown_github_languages = []
+endif
+for s:type in map(copy(g:markdown_github_languages),'matchstr(v:val,"[^=]*$")')
+  if s:type =~ '\.'
+    let b:{matchstr(s:type,'[^.]*')}_subtype = matchstr(s:type,'\.\zs.*')
+  endif
+  exe 'syn include @markdownHighlight'.substitute(s:type,'\.','','g').' syntax/'.matchstr(s:type,'[^.]*').'.vim'
+  unlet! b:current_syntax
+endfor
+unlet! s:type
+
 syn sync minlines=10
 syn case ignore
 
@@ -67,6 +79,11 @@ syn region markdownBoldItalic start="\S\@<=___\|___\S\@=" end="\S\@<=___\|___\S\
 syn region markdownCode matchgroup=markdownCodeDelimiter start="`" end="`" keepend contains=markdownLineStart
 syn region markdownCode matchgroup=markdownCodeDelimiter start="`` \=" end=" \=``" keepend contains=markdownLineStart
 syn region markdownCode matchgroup=markdownCodeDelimiter start="^\s*\zs```\s*\w*\ze\s*$" end="^```\ze\s*$" keepend
+
+for s:type in g:liquid_highlight_types
+  exe 'syn region markdownHighlight'.substitute(matchstr(s:type,'[^=]*$'),'\..*','','').' matchgroup=markdownCodeDelimiter start="^\s*\zs```'.matchstr(s:type,'[^=]*').'$" end="^```\ze\s*$" keepend contains=@markdownHighlight'.substitute(matchstr(s:type,'[^=]*$'),'\.','','g')
+endfor
+unlet! s:type
 
 syn match markdownEscape "\\[][\\`*_{}()#+.!-]"
 syn match markdownError "\w\@<=_\w\@="
