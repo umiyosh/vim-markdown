@@ -70,6 +70,8 @@ syn region markdownCode matchgroup=markdownCodeDelimiter start="^\s*\zs```\s*.*$
 
 syn match markdownEscape "\\[][\\`*_{}()#+.!-]"
 syn match markdownError "\w\@<=_\w\@="
+syn match markdownTodo   /\ctodo:/
+syn match markdownDone   /\cdone:/
 
 hi def link markdownH1                    htmlH1
 hi def link markdownH2                    htmlH2
@@ -101,6 +103,9 @@ hi def link markdownCodeDelimiter         Delimiter
 
 hi def link markdownEscape                Special
 hi def link markdownError                 Error
+
+hi def link markdownTodo                  Todo
+hi def link markdownDone                  Error
 
 let b:current_syntax = "markdown"
 
